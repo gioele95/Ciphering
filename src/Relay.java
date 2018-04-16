@@ -119,7 +119,7 @@ public class Relay {
         byte [] plainText = StringUtilities.extractLastBytes(digest_plain, digest_plain.length-HASHSIZE);
         byte [] computedHash = computeDigest(plainText);
         System.out.println("COMPUTED HASH: "+new String(computedHash));
-        if(Arrays.equals(computedHash, digest))
+        if(compareDigests(computedHash, digest))
             System.out.println("YOU ARE SAFE TO GO ");
         else
             System.out.println("THEY ARE DIFFERENT, STUDY MORE");
@@ -140,7 +140,7 @@ public class Relay {
         byte[] msg = decryptedReceive(port); 
         byte[] receivedNonce = StringUtilities.extractLastBytes(msg,INTSIZE);
         if(Arrays.equals(receivedNonce, nonce))
-            System.out.println("THE CLIENT IS TRUSTWORTHY");
+            System.out.println("THE CLIENT IS TRUSTWORTHY");   
         else
             System.out.println("TRUDY IS HERE, REPLAY ATTACK");
         return StringUtilities.extractFirstBytes(msg,msg.length-INTSIZE);
@@ -154,6 +154,12 @@ public class Relay {
     
     public int generateNonce(){
         return (new SecureRandom()).nextInt();
+    }
+    private boolean compareDigests(byte [] d1, byte [] d2) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException{
+        //DIGESTS ARE COMPARED BY COMPARING THEIR HASHES IN ORDER TO AVOID TIMING ATTACKS
+        byte [] dd1 = computeDigest(d1);
+        byte [] dd2 = computeDigest(d2);
+        return Arrays.equals(dd1, dd2);
     }
     
 }
