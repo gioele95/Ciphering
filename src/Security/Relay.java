@@ -69,7 +69,7 @@ public class Relay {
         System.out.println("SENT: "+new String(encryptedBytes));
         return tmp;         
     }
-    public boolean send(byte[] data,String hostName,int port) throws IOException{
+    public static boolean send(byte[] data,String hostName,int port) throws IOException{
         try(Socket ss = new Socket(hostName, port)){
             DataOutputStream ds = new DataOutputStream(ss.getOutputStream());
             ds.writeInt(data.length);
@@ -80,7 +80,7 @@ public class Relay {
         }
         return true;
     }
-    public byte[] receive(int port) throws IOException, Exception{
+    public static byte[] receive(int port) throws IOException, Exception{
         try(ServerSocket ss = new ServerSocket(port)){
             Socket s = ss.accept();
             DataInputStream di = new DataInputStream(s.getInputStream());
