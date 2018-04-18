@@ -2,6 +2,8 @@ package secureChat;
 
 
 import Security.Relay;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 
 public class Server extends Relay implements Runnable{
