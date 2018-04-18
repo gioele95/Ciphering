@@ -67,15 +67,13 @@ public class Relay {
     }
 
     public byte[] noncedReceive(String hostName,int port) throws IOException, Exception{
-        byte[] nonce = ByteBuffer.allocate(INTSIZE).putInt(generateNonce()).array();
+        byte[] nonce = ByteBuffer.allocate(INTSIZE).putInt(Nonce.generateNonce()).array();
         send(nonce, hostName, port);
-        byte[] msg = decryptedReceive(port); 
-        byte[] receivedNonce = StringUtilities.extractLastBytes(msg,INTSIZE);
-        if(Arrays.equals(receivedNonce, nonce))
-            System.out.println("THE CLIENT IS TRUSTWORTHY");   
-        else
-            System.out.println("TRUDY IS HERE, REPLAY ATTACK");
-        return StringUtilities.extractFirstBytes(msg,msg.length-INTSIZE);
+        byte[] msg = decryptedReceive(port);
+        if(Nonce.checkNonce(msg, nonce))
+            return StringUtilities.extractFirstBytes(msg,msg.length-INTSIZE);
+        else 
+            return null;
     }
     public boolean noncedSend(String data,String hostName,int port) throws IOException, Exception{
         byte [] nonce = receive(port);
@@ -83,8 +81,4 @@ public class Relay {
         msg = StringUtilities.concatenateBytes(msg, nonce);  //NONCE AT THE TAIL
         return encryptedSend(msg, hostName, port);        
     }
-    
-    public int generateNonce(){
-        return (new SecureRandom()).nextInt();
-    }  
 }
